@@ -71,4 +71,4 @@
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/spreadsheet-clone.git
+   git clone https://github.com/raagavi2105/zeotap_sheets.git
