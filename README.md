@@ -38,7 +38,7 @@
 ## 💻 Tech Stack
 
 - **Frontend**: HTML, CSS, JavaScript
-- **Libraries**: Chart.js (for data visualization)
+
 
 ---
 
