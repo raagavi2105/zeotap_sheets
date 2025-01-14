@@ -57,13 +57,13 @@
 
 ## 🌐 Live Demo
 
-[View Live Demo](#)
+[View Live Demo](https://raagavi2105.github.io/zeotap_sheets/)
 
 ---
 
 ## 🎥 Video Demo
 
-[Watch the Project in Action](#)
+[Watch the Project in Action](https://youtu.be/vZ_AAsvfhYo)
 
 ---
 
