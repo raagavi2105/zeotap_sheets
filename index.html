@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZeoTap Spreadsheet</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ZeoTap Spreadsheet</h1>
+        </div>
+
+        <div class="toolbar">
+            <div class="format-group">
+                <button id="bold-btn" title="Bold"><b>B</b></button>
+                <button id="italics-btn" title="Italic"><i>I</i></button>
+                <button id="underline-btn" title="Underline"><u>U</u></button>
+                <button id="left-btn" title="Align Left">⇤</button>
+                <button id="center-btn" title="Center">⇌</button>
+                <button id="right-btn" title="Align Right">⇥</button>
+            </div>
+
+            <div class="style-group">
+                <select id="font-style-dropdown">
+                    <option value="Arial">Arial</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Verdana">Verdana</option>
+                    <!-- Add more font options here -->
+                </select>
+                <input type="color" id="font-color-picker" title="Font Color">
+            </div>
+        </div>
+
+        <div class="function-toolbar">
+            <div class="math-functions">
+                <button onclick="applyFunction('sum')">SUM</button>
+                <button onclick="applyFunction('difference')">DIFF</button>
+                <button onclick="applyFunction('average')">AVG</button>
+                <button onclick="applyFunction('max')">MAX</button>
+                <button onclick="applyFunction('min')">MIN</button>
+                <button onclick="applyFunction('count')">COUNT</button>
+            </div>
+
+            <div class="data-functions">
+                <button onclick="applyFunction('trim')">TRIM</button>
+                <button onclick="applyFunction('upper')">UPPER</button>
+                <button onclick="applyFunction('lower')">LOWER</button>
+                <button onclick="applyFunction('removeDuplicates')">REMOVE DUPLICATE</button>
+                <div class="find-replace">
+                    <input type="text" id="find-text" placeholder="Find">
+                    <input type="text" id="replace-text" placeholder="Replace">
+                    <button onclick="applyFunction('findAndReplace')">Replace</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="spreadsheet-container">
+            <table id="spreadsheet">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <!-- Generate column headers dynamically -->
+                        <script>
+                            for (let i = 0; i < 26; i++) {
+                                document.write(`<th>${String.fromCharCode(65 + i)}</th>`);
+                            }
+                        </script>
+                    </tr>
+                </thead>
+                <tbody id="spreadsheet-body">
+                    <!-- Rows will be generated dynamically by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="sheet-controls">
+            <button id="add-sheet-btn">Add Sheet</button>
+            <select id="sheet-selector"></select>
+        </div>
+    </div>
+
+    <script src="functions.js"></script>
+    <script src="matrix.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Generate 100 rows and 26 columns
+        const spreadsheetBody = document.getElementById('spreadsheet-body');
+        for (let i = 1; i <= 100; i++) {
+            const row = document.createElement('tr');
+            const rowHeader = document.createElement('th');
+            rowHeader.textContent = i;
+            row.appendChild(rowHeader);
+            for (let j = 0; j < 26; j++) {
+                const cell = document.createElement('td');
+                cell.contentEditable = 'true';
+                cell.addEventListener('click', () => selectCell(cell));
+                row.appendChild(cell);
+            }
+            spreadsheetBody.appendChild(row);
+        }
+
+        let selectedCells = [];
+
+        function selectCell(cell) {
+            if (selectedCells.includes(cell)) {
+                cell.classList.remove('selected-cell');
+                selectedCells = selectedCells.filter(c => c !== cell);
+            } else {
+                cell.classList.add('selected-cell');
+                selectedCells.push(cell);
+            }
+        }
+
+        function applyFunction(func) {
+            const values = selectedCells.map(cell => parseFloat(cell.textContent) || 0);
+            let result;
+            switch (func) {
+                case 'sum':
+                    result = values.reduce((a, b) => a + b, 0);
+                    break;
+                case 'difference':
+                    result = values.reduce((a, b) => a - b);
+                    break;
+                case 'average':
+                    result = values.reduce((a, b) => a + b, 0) / values.length;
+                    break;
+                case 'max':
+                    result = Math.max(...values);
+                    break;
+                case 'min':
+                    result = Math.min(...values);
+                    break;
+                case 'count':
+                    result = values.length;
+                    break;
+                case 'trim':
+                    selectedCells.forEach(cell => cell.textContent = cell.textContent.trim());
+                    return;
+                case 'upper':
+                    selectedCells.forEach(cell => cell.textContent = cell.textContent.toUpperCase());
+                    return;
+                case 'lower':
+                    selectedCells.forEach(cell => cell.textContent = cell.textContent.toLowerCase());
+                    return;
+                case 'removeDuplicates':
+                    const uniqueValues = [...new Set(values)];
+                    selectedCells.forEach((cell, index) => {
+                        cell.textContent = uniqueValues[index] || '';
+                    });
+                    return;
+                case 'findAndReplace':
+                    const findText = document.getElementById('find-text').value;
+                    const replaceText = document.getElementById('replace-text').value;
+                    selectedCells.forEach(cell => {
+                        cell.textContent = cell.textContent.replace(new RegExp(findText, 'g'), replaceText);
+                    });
+                    return;
+                default:
+                    return;
+            }
+            alert(`Result: ${result}`);
+        }
+
+        document.getElementById('bold-btn').addEventListener('click', () => applyStyle('fontWeight', 'bold'));
+        document.getElementById('italics-btn').addEventListener('click', () => applyStyle('fontStyle', 'italic'));
+        document.getElementById('underline-btn').addEventListener('click', () => applyStyle('textDecoration', 'underline'));
+        document.getElementById('left-btn').addEventListener('click', () => applyStyle('textAlign', 'left'));
+        document.getElementById('center-btn').addEventListener('click', () => applyStyle('textAlign', 'center'));
+        document.getElementById('right-btn').addEventListener('click', () => applyStyle('textAlign', 'right'));
+        document.getElementById('font-style-dropdown').addEventListener('change', (event) => applyStyle('fontFamily', event.target.value));
+        document.getElementById('font-color-picker').addEventListener('input', (event) => applyStyle('color', event.target.value));
+
+        function applyStyle(style, value) {
+            selectedCells.forEach(cell => {
+                cell.style[style] = value;
+            });
+        }
+
+        // Sheet management
+        const sheetSelector = document.getElementById('sheet-selector');
+        const sheets = [];
+        let currentSheetIndex = 0;
+
+        document.getElementById('add-sheet-btn').addEventListener('click', addSheet);
+
+        function addSheet() {
+            const sheetName = `Sheet ${sheets.length + 1}`;
+            sheets.push(createSheet());
+            const option = document.createElement('option');
+            option.value = sheets.length - 1;
+            option.textContent = sheetName;
+            sheetSelector.appendChild(option);
+            sheetSelector.value = sheets.length - 1;
+            switchSheet(sheets.length - 1);
+        }
+
+        sheetSelector.addEventListener('change', (event) => {
+            switchSheet(event.target.value);
+        });
+
+        function createSheet() {
+            const matrix = [];
+            for (let i = 0; i < 100; i++) {
+                const row = [];
+                for (let j = 0; j < 26; j++) {
+                    row.push({ value: '', style: {} });
+                }
+                matrix.push(row);
+            }
+            return matrix;
+        }
+
+        function switchSheet(index) {
+            currentSheetIndex = index;
+            const sheet = sheets[index];
+            for (let i = 0; i < 100; i++) {
+                for (let j = 0; j < 26; j++) {
+                    const cell = spreadsheetBody.rows[i].cells[j + 1];
+                    cell.textContent = sheet[i][j].value;
+                    Object.assign(cell.style, sheet[i][j].style);
+                }
+            }
+        }
+
+        addSheet(); // Initialize with the first sheet
+    </script>
+</body>
+</html>
