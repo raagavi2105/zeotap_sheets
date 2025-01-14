@@ -47,8 +47,8 @@
 ### Spreadsheet Interface  
 ![Spreadsheet Interface](./screenshots/spreadsheet_interface.png)
 
-### Toolbar Features  
-![Toolbar Features](./screenshots/toolbar_features.png)
+### Mathematical Features  
+![Toolbar Features](./screenshots/mah.png)
 
 ### Mathematical Functions  
 ![Mathematical Functions](./screenshots/mathematical_functions.png)
